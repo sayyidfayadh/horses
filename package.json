@@ -1,0 +1,16 @@
+{
+  "name": "drc-accepted-horses-mock",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Mock of the carnival portal's GET /api/accepted-horses for DrcSync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "json-server": "0.17.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
