@@ -36,6 +36,10 @@ PowerShell: `$env:MOCK_API_KEY='dev'; npm start`.
 - Only Japan and Hong Kong horses are submitted by an `Agent` (with a
   `Nominee_Name`). Horses from every other country are submitted by their
   `Trainer`.
+- Some agent-submitted horses have no trainer: `Trainer_Name`,
+  `Trainer_Email` and `Trainer_Phonenumber` are empty strings. In `db.json`
+  these are `DWC2026/005` and `DWC2026/013`; generated agent horses have no
+  trainer half the time.
 - Every row is `horsestatus` 1 (Invite) and `Invitation_Status` 2 (Accepted).
 - Countries are names (`UAE`, `Japan`, `Hong Kong`, …). The backend matches
   them against Country Master by exact name; a name it does not hold is left

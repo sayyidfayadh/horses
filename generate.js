@@ -69,7 +69,7 @@ const generateHorse = (id) => {
   // Submitted on some day between 2026-07-01 and 2026-09-28.
   const submitted = new Date(Date.UTC(2026, 6, 1) + Math.floor(r() * 90) * 86400000).toISOString().slice(0, 10);
 
-  return {
+  const horse = {
     referenceno: `DWC2026/${String(id).padStart(3, '0')}`,
     Trainer_Name: trainer,
     Trainer_Email: `${slug(trainer)}@stables.example`,
@@ -101,6 +101,16 @@ const generateHorse = (id) => {
     Created_at: `${submitted} 08:26:04`,
     submissiondate: submitted,
   };
+
+  // Half of agent-submitted horses have no trainer on file. Drawn last so it
+  // leaves every other field of an existing id unchanged.
+  if (by === 'Agent' && r() < 0.5) {
+    horse.Trainer_Name = '';
+    horse.Trainer_Email = '';
+    horse.Trainer_Phonenumber = '';
+  }
+
+  return horse;
 };
 
 module.exports = { generateHorse };
