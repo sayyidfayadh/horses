@@ -31,6 +31,9 @@ const COUNTRIES = [
   { name: 'Australia', code: 'AUS', phone: '+6129123' },
 ];
 
+// The only countries whose horses may be submitted by an agent.
+const AGENT_COUNTRIES = new Set(['Japan', 'Hong Kong']);
+
 const FIRST = ['Desert', 'Golden', 'Silver', 'Royal', 'Midnight', 'Storm', 'Crimson', 'Northern', 'Sakura', 'Jade', 'Falcon', 'Ocean', 'Thunder', 'Velvet', 'Iron', 'Lucky', 'Noble', 'Wild', 'Shadow', 'Amber'];
 const SECOND = ['Emperor', 'Mirage', 'Runner', 'Spirit', 'Dancer', 'Warrior', 'Legend', 'Arrow', 'Crown', 'Comet', 'Breeze', 'Prince', 'Queen', 'Flame', 'Star', 'Glory', 'Quest', 'Echo', 'Dream', 'Blaze'];
 const TRAINERS = ['Yoshito Yahagi', 'Hideaki Fujiwara', 'Mitsuru Hashida', 'Francis Lui', 'Danny Shum', 'John Size', 'Salem bin Ghadayer', 'Bhupat Seemar', 'Doug Watson', 'Charlie Appleby', 'Aidan O’Brien', 'Bob Baffert', 'Andre Fabre', 'Chris Waller'];
@@ -57,7 +60,9 @@ const generateHorse = (id) => {
   const raceIndex = Math.floor(r() * RACES.length);
   const race = RACES[raceIndex];
   const trainer = pick(TRAINERS);
-  const by = r() < 0.5 ? 'Trainer' : 'Agent';
+  // Only Japanese and Hong Kong horses come in through an agent; every other
+  // country is submitted by its trainer.
+  const by = r() >= 0.5 && AGENT_COUNTRIES.has(country.name) ? 'Agent' : 'Trainer';
   const nominee = by === 'Agent' ? pick(AGENTS) : '';
   // The id is in the name so two generated horses can never share one.
   const name = `${pick(FIRST)} ${pick(SECOND)} ${id}`;
