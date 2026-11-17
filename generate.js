@@ -33,6 +33,13 @@ const COUNTRIES = [
 
 // The only countries whose horses may be submitted by an agent.
 const AGENT_COUNTRIES = new Set(['Japan', 'Hong Kong']);
+const AGENT_HOME = [
+  { name: 'Japan', code: 'JPN' },
+  { name: 'Hong Kong', code: 'HK' },
+];
+// First generated id that gets the higher no-trainer rate. Ids below it were
+// synced before the change and keep the horse they were.
+const TRAINERLESS_FROM = Number(process.env.MOCK_TRAINERLESS_FROM) || 201;
 
 const FIRST = ['Desert', 'Golden', 'Silver', 'Royal', 'Midnight', 'Storm', 'Crimson', 'Northern', 'Sakura', 'Jade', 'Falcon', 'Ocean', 'Thunder', 'Velvet', 'Iron', 'Lucky', 'Noble', 'Wild', 'Shadow', 'Amber'];
 const SECOND = ['Emperor', 'Mirage', 'Runner', 'Spirit', 'Dancer', 'Warrior', 'Legend', 'Arrow', 'Crown', 'Comet', 'Breeze', 'Prince', 'Queen', 'Flame', 'Star', 'Glory', 'Quest', 'Echo', 'Dream', 'Blaze'];
@@ -108,6 +115,31 @@ const generateHorse = (id) => {
     horse.Trainer_Name = '';
     horse.Trainer_Email = '';
     horse.Trainer_Phonenumber = '';
+  }
+
+  // From TRAINERLESS_FROM on, two in five horses come in with no trainer:
+  // the old rate (about 1 in 11) left too few for Add trainer to offer. The
+  // draw uses its own seed, so ids below the line are exactly as before, and
+  // a horse it picks becomes a Japan / Hong Kong agent submission, the only
+  // kind that arrives without a trainer.
+  if (id >= TRAINERLESS_FROM && rng(id * 40503 + 7)() < 0.4) {
+    const t = rng(id * 40503 + 11);
+    const c = AGENT_HOME[Math.floor(t() * AGENT_HOME.length)];
+    const nom = AGENTS[Math.floor(t() * AGENTS.length)];
+    Object.assign(horse, {
+      Trainer_Name: '',
+      Trainer_Email: '',
+      Trainer_Phonenumber: '',
+      CountryLicense: c.name,
+      Application_Submittedby: 'Agent',
+      Nominee_Name: nom,
+      Nominee_Email: `${slug(nom)}@agents.example`,
+      Travel_status: 'International',
+      horsename: `${name} (${c.code})`,
+      horsecountry: c.name,
+      country_code: c.code,
+      shippingcountry: c.name,
+    });
   }
 
   return horse;

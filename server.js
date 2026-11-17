@@ -36,6 +36,10 @@ if (apiKey) {
 // count is in memory, so a restart starts again from the fixed horses — the
 // generated ones come back identical as it grows past them again.
 const fixed = router.db.get('accepted-horses').get('data').value();
+// Agent-submitted Japan / Hong Kong horses with no trainer (ids 9101-9120),
+// on every answer and outside the growth, so Add trainer always has horses
+// to offer and no generated id moves.
+const trainerless = require('./trainerless-horses.json');
 const grow = Math.max(0, Number(process.env.MOCK_GROW ?? 5) || 0);
 let size = fixed.length;
 
@@ -50,6 +54,7 @@ server.get('/api/accepted-horses', (req, res) => {
   }
   const data = fixed.slice(0, n);
   for (let id = fixed.length + 1; id <= n; id++) data.push(generateHorse(id));
+  data.push(...trainerless);
   res.json({ status: 'success', count: data.length, data });
 });
 
